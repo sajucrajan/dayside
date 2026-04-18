@@ -5,8 +5,11 @@ on:
     tags:
       - 'v*'
 
+permissions:
+  contents: write
+
 jobs:
-  build:
+  build-windows:
     runs-on: windows-latest
 
     steps:
@@ -26,7 +29,51 @@ jobs:
       - name: Build
         run: wails build -clean -platform windows/amd64
 
-      - name: Upload to Release
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-build
+          path: build/bin/Dayside.exe
+
+  build-macos:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23'
+
+      - name: Install Wails
+        run: go install github.com/wailsapp/wails/v2/cmd/wails@v2.12.0
+
+      - name: Fetch dependencies
+        run: go mod tidy
+
+      - name: Build
+        run: wails build -clean -platform darwin/universal
+
+      - name: Upload macOS artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-build
+          path: build/bin/Dayside.app
+
+  release:
+    needs: [build-windows, build-macos]
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+
+      - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
-          files: build/bin/Dayside.exe
+          files: |
+            windows-build/Dayside.exe
+            macos-build/Dayside.app
