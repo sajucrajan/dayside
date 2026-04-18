@@ -2,8 +2,6 @@
 
 **A candidate-operated pre-interview machine check.** See what's running, what's hidden, and what doesn't belong — before and during the interview.
 
-![Dayside scan results](docs/screenshot-scan.png)
-
 ---
 
 ## What this is
