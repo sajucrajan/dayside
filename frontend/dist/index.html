@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dayside</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=JetBrains+Mono:wght@400;500;600&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     CONSENT MODAL (shown on every launch)
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="ds-consent-overlay" id="ds-consent-modal" role="dialog" aria-modal="true" aria-labelledby="ds-consent-title" style="display: none;">
+  <div class="ds-consent-card">
+    <div class="ds-consent-head">
+      <p class="ds-tagline">Dayside</p>
+      <h1 id="ds-consent-title">Before you continue</h1>
+      <p>Please read this carefully. You can decline at any time &mdash; nothing is scanned or transmitted unless you agree.</p>
+    </div>
+
+    <div class="ds-consent-body">
+
+      <h2>What Dayside does when you click "Start scan"</h2>
+      <p>Dayside looks at the following on <strong>this computer only</strong>, when you explicitly start a scan:</p>
+      <ul class="ds-list">
+        <li>Processes currently running and their names</li>
+        <li>Visible application windows and their titles</li>
+        <li>Open browser tabs (titles, plus URLs on macOS)</li>
+        <li>Connected audio and video devices</li>
+        <li>System state: monitor count, remote-session status, architecture</li>
+      </ul>
+      <p>It compares this information against a list of known AI interview assistants and suspicious patterns. Findings appear on <strong>your screen</strong> for your review.</p>
+
+      <h2>Nothing happens automatically</h2>
+      <p>Agreeing to this consent <strong>does not start a scan</strong>. It opens the main Dayside window in a "Ready" state. You choose when to run the first scan by clicking the <strong>Start scan</strong> button &mdash; typically when your interview begins and you're sharing your screen. You are in control of the timing.</p>
+
+      <h2>Optional: continuous checking during the interview</h2>
+      <p>In the main window you'll see a toggle labeled <strong>"Keep checking every 5 minutes"</strong>. This is <strong>off by default</strong>. If you enable it, Dayside will re-run the same scan every 5 minutes to catch anything launched after the interview starts.</p>
+
+      <h2>Compact mode (always-on-top window)</h2>
+      <p>Dayside can shrink to a small, draggable status window that stays on top of other windows. This lets the interviewer see at a glance that the scan is current and the machine is clean, without the full window blocking your work. You can toggle between full and compact at any time.</p>
+      <p>Dayside <strong>does not hide itself from screen capture</strong>. It is designed to be visible to both you and the interviewer during the screen-share. That visibility is the point of the tool.</p>
+
+      <h2>Dayside is read-only</h2>
+      <p>Dayside <strong>only observes</strong>. It does not close, terminate, modify, or change anything on your computer. If a flagged item turns out to be something you want to close, you do that yourself using <strong>Task Manager</strong> (Windows) or <strong>Activity Monitor</strong> (macOS).</p>
+
+      <h2>What Dayside does not do</h2>
+      <ul class="ds-list">
+        <li><strong>No upload.</strong> No network calls. No server communication. Ever.</li>
+        <li><strong>No recording.</strong> Screen, camera, and microphone are not accessed.</li>
+        <li><strong>No biometrics.</strong> No face scan, voice print, or keystroke capture.</li>
+        <li><strong>No persistent data.</strong> When this app closes, nothing remains.</li>
+        <li><strong>No changes to your system.</strong> The tool cannot close, start, or modify any process, file, or setting.</li>
+        <li><strong>No file contents.</strong> Your documents, emails, messages, and personal files are not read.</li>
+        <li><strong>No hiding.</strong> Dayside itself never disappears from the screen-share. Compact mode makes it smaller, not invisible.</li>
+      </ul>
+
+      <h2>Accuracy</h2>
+      <p>Detection is not perfect. Legitimate software can be flagged by mistake, and some AI assistants may go undetected. Treat every flag as a <strong>signal for discussion</strong>, not a verdict.</p>
+
+      <div class="ds-warn">
+        <strong>No warranty.</strong> Dayside is provided as-is under the Apache License 2.0. The project and its contributors are not liable for any damages arising from use of this tool, to the maximum extent permitted by law. If you are unsure whether to run it, do not.
+      </div>
+
+      <h2>Your choice</h2>
+      <p>If you click <strong>Decline and quit</strong>, Dayside will close without ever scanning anything. No information is collected, processed, or transmitted.</p>
+    </div>
+
+    <div class="ds-consent-check">
+      <input type="checkbox" id="ds-consent-checkbox" />
+      <label for="ds-consent-checkbox">
+        I have read and understand the above. I am the user of this computer or authorized to run software on it, and I consent to the local scan described. I understand I must click "Start scan" in the next screen for any scan to actually run.
+      </label>
+    </div>
+
+    <div class="ds-consent-actions">
+      <button class="ds-btn ds-btn-decline" id="ds-consent-decline">Decline and quit</button>
+      <button class="ds-btn ds-btn-agree" id="ds-consent-agree" disabled>Agree</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     MAIN WINDOW
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="ds-window" id="ds-main-window">
+
+  <!-- Title bar (shared between full + compact) -->
+  <div class="ds-titlebar">
+    <div class="ds-titlebar-left">
+      <div class="ds-traffic-lights"><span></span><span></span><span></span></div>
+      <span class="ds-title"><span class="ds-title-dot" id="ds-title-dot"></span>Dayside</span>
+    </div>
+    <div class="ds-titlebar-right">
+      <button class="ds-chrome-btn theme-btn" data-theme="light" title="Light theme">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="4"/>
+          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+        </svg>
+      </button>
+      <button class="ds-chrome-btn theme-btn" data-theme="dark" title="Dark theme">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+      <button class="ds-chrome-btn" id="ds-compact-btn" title="Switch to compact mode">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="4" y="9" width="16" height="6" rx="3"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Full-view content -->
+  <div class="ds-content" id="ds-full-content">
+
+    <!-- ═══ STATE: Ready ═══ -->
+    <div class="ds-state-ready active" id="state-ready">
+      <div class="ds-ready-layout">
+        <div class="ds-ready-hero">
+          <div class="ds-sun-mark"></div>
+          <div class="ds-ready-title">Ready when you are.</div>
+          <div class="ds-ready-sub">
+            Click <strong>Start scan</strong> to check this machine for AI interview assistants and other pre-interview flags. Nothing scans until you click.
+          </div>
+          <button class="ds-start-btn" id="ds-start-btn" disabled>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="5 3 19 12 5 21 5 3"/>
+            </svg>
+            Start scan
+          </button>
+        </div>
+
+        <div class="ds-options">
+          <div class="ds-options-label">Options</div>
+
+          <div class="ds-option-row">
+            <div class="ds-option-text">
+              <div class="ds-option-label">Keep checking every 5 minutes</div>
+              <div class="ds-option-hint">Re-runs the scan periodically during the interview. Off by default.</div>
+            </div>
+            <div class="ds-toggle" id="ds-toggle-periodic" role="switch" aria-checked="false" tabindex="0"></div>
+          </div>
+
+          <div class="ds-option-row">
+            <div class="ds-option-text">
+              <div class="ds-option-label">Compact mode on start</div>
+              <div class="ds-option-hint">Shrinks to a small always-on-top status window after first scan.</div>
+            </div>
+            <div class="ds-toggle on" id="ds-toggle-compact-start" role="switch" aria-checked="true" tabindex="0"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ STATE: Scanning ═══ -->
+    <div class="ds-scanning" id="state-scanning">
+      <div class="ds-scan-stage" id="ds-scan-stage">Checking processes &amp; windows&hellip;</div>
+      <div class="ds-scan-label">This takes about 10 seconds</div>
+      <div class="ds-scan-bar"></div>
+      <div class="ds-scan-label ds-scan-sublabel" id="ds-scan-sublabel">Starting&hellip;</div>
+    </div>
+
+    <!-- ═══ STATE: Results ═══ -->
+    <div class="ds-results" id="state-results">
+      <div class="ds-results-header">
+        <div>
+          <div class="ds-results-title">Scan complete</div>
+          <div class="ds-results-timestamp" id="ds-results-timestamp">&mdash;</div>
+        </div>
+        <button class="ds-rescan-btn" id="ds-rescan-btn">Scan again</button>
+      </div>
+
+      <!-- Hero KPI row -->
+      <div class="ds-kpi-row">
+        <div class="ds-kpi crit">
+          <div class="ds-kpi-head">
+            <span class="ds-kpi-label">Critical</span>
+            <div class="ds-kpi-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="8" x2="12" y2="12"/>
+                <line x1="12" y1="16" x2="12.01" y2="16"/>
+              </svg>
+            </div>
+          </div>
+          <div class="ds-kpi-number" id="ds-kpi-crit">0</div>
+          <div class="ds-kpi-sub" id="ds-kpi-crit-sub">No critical findings.</div>
+        </div>
+
+        <div class="ds-kpi warn">
+          <div class="ds-kpi-head">
+            <span class="ds-kpi-label">Warnings</span>
+            <div class="ds-kpi-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                <line x1="12" y1="9" x2="12" y2="13"/>
+                <line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
+            </div>
+          </div>
+          <div class="ds-kpi-number" id="ds-kpi-warn">0</div>
+          <div class="ds-kpi-sub" id="ds-kpi-warn-sub">No warnings.</div>
+        </div>
+
+        <div class="ds-kpi ok">
+          <div class="ds-kpi-head">
+            <span class="ds-kpi-label">Clean</span>
+            <div class="ds-kpi-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+            </div>
+          </div>
+          <div class="ds-kpi-number" id="ds-kpi-ok">0</div>
+          <div class="ds-kpi-sub" id="ds-kpi-ok-sub">Items checked.</div>
+        </div>
+      </div>
+
+      <!-- Sidebar + content pane -->
+      <div class="ds-results-body">
+
+        <div class="ds-sidebar">
+          <div class="ds-sidebar-summary">
+            <div class="ds-summary-headline">
+              <span class="ds-summary-big" id="ds-summary-big">0</span>
+              <span class="ds-summary-of" id="ds-summary-of">of 0 clean</span>
+            </div>
+            <div class="ds-summary-tagline" id="ds-summary-tagline">No scans yet.</div>
+          </div>
+
+          <nav class="ds-sidebar-nav" id="ds-sidebar-nav">
+            <div class="ds-sidebar-label">Categories</div>
+            <a class="ds-nav-item" href="#cat-processes" data-cat="processes">
+              <span class="ds-nav-dot muted" data-dot="processes"></span>
+              <span class="ds-nav-name">Processes</span>
+              <span class="ds-nav-count" data-count="processes">0</span>
+            </a>
+            <a class="ds-nav-item" href="#cat-windows" data-cat="windows">
+              <span class="ds-nav-dot muted" data-dot="windows"></span>
+              <span class="ds-nav-name">Windows</span>
+              <span class="ds-nav-count" data-count="windows">0</span>
+            </a>
+            <a class="ds-nav-item" href="#cat-tabs" data-cat="tabs">
+              <span class="ds-nav-dot muted" data-dot="tabs"></span>
+              <span class="ds-nav-name">Browser tabs</span>
+              <span class="ds-nav-count" data-count="tabs">0</span>
+            </a>
+            <a class="ds-nav-item" href="#cat-devices" data-cat="devices">
+              <span class="ds-nav-dot muted" data-dot="devices"></span>
+              <span class="ds-nav-name">Audio &amp; video</span>
+              <span class="ds-nav-count" data-count="devices">0</span>
+            </a>
+            <a class="ds-nav-item" href="#cat-monitors" data-cat="monitors">
+              <span class="ds-nav-dot muted" data-dot="monitors"></span>
+              <span class="ds-nav-name">Monitors</span>
+              <span class="ds-nav-count" data-count="monitors">&mdash;</span>
+            </a>
+            <a class="ds-nav-item" href="#cat-remote" data-cat="remote">
+              <span class="ds-nav-dot muted" data-dot="remote"></span>
+              <span class="ds-nav-name">Remote access</span>
+              <span class="ds-nav-count" data-count="remote">0</span>
+            </a>
+            <a class="ds-nav-item" href="#cat-system" data-cat="system">
+              <span class="ds-nav-dot muted" data-dot="system"></span>
+              <span class="ds-nav-name">System state</span>
+              <span class="ds-nav-count" data-count="system">&mdash;</span>
+            </a>
+          </nav>
+        </div>
+
+        <div class="ds-categories" id="ds-categories">
+          <section class="ds-category" id="cat-processes" data-cat="processes"></section>
+          <section class="ds-category" id="cat-windows" data-cat="windows"></section>
+          <section class="ds-category" id="cat-tabs" data-cat="tabs"></section>
+          <section class="ds-category" id="cat-devices" data-cat="devices"></section>
+          <section class="ds-category" id="cat-monitors" data-cat="monitors"></section>
+          <section class="ds-category" id="cat-remote" data-cat="remote"></section>
+          <section class="ds-category" id="cat-system" data-cat="system"></section>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       COMPACT VIEW (360 × 280 — shown when compact-mode is active)
+       ═══════════════════════════════════════════════════════════ -->
+  <div class="ds-compact-shell" id="ds-compact-view">
+    <div class="ds-compact ok" id="ds-compact-inner">
+
+      <div class="ds-compact-chrome">
+        <div class="ds-compact-brand">
+          <span class="ds-compact-grip"></span>
+          <span>Dayside</span>
+        </div>
+        <div class="ds-compact-actions">
+          <button class="ds-compact-btn" id="ds-compact-expand" title="Expand to full window">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="15 3 21 3 21 9"/>
+              <polyline points="9 21 3 21 3 15"/>
+              <line x1="21" y1="3" x2="14" y2="10"/>
+              <line x1="3" y1="21" x2="10" y2="14"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="ds-compact-status">
+        <div class="ds-compact-indicator">
+          <div class="ds-compact-indicator-ring"></div>
+          <div class="ds-compact-dot"></div>
+        </div>
+        <div class="ds-compact-headline">
+          <div class="ds-compact-title" id="ds-compact-title">Ready</div>
+          <div class="ds-compact-sub" id="ds-compact-sub">Click Scan now to check</div>
+        </div>
+      </div>
+
+      <div class="ds-compact-heroes" id="ds-compact-heroes">
+        <div class="ds-compact-hero" id="ds-compact-hero-crit">
+          <div class="ds-compact-hero-value" id="ds-compact-hero-crit-value">0</div>
+          <div class="ds-compact-hero-label">Critical</div>
+        </div>
+        <div class="ds-compact-hero" id="ds-compact-hero-warn">
+          <div class="ds-compact-hero-value" id="ds-compact-hero-warn-value">0</div>
+          <div class="ds-compact-hero-label">Warnings</div>
+        </div>
+        <div class="ds-compact-hero" id="ds-compact-hero-ok">
+          <div class="ds-compact-hero-value" id="ds-compact-hero-ok-value">0</div>
+          <div class="ds-compact-hero-label">Checked</div>
+        </div>
+      </div>
+
+      <div class="ds-compact-history">
+        <div class="ds-history-label">
+          <span id="ds-history-title">Recent scans</span>
+          <span class="ds-history-count" id="ds-history-count">&mdash;</span>
+        </div>
+        <div class="ds-history-timeline" id="ds-history-timeline"></div>
+        <div class="ds-history-scale">
+          <span id="ds-history-first">&mdash;</span>
+          <span>now</span>
+        </div>
+      </div>
+
+      <div class="ds-compact-footer">
+        <div class="ds-compact-countdown off" id="ds-compact-countdown">
+          <span class="ds-compact-countdown-dot"></span>
+          <span id="ds-compact-countdown-text">Periodic scanning off</span>
+        </div>
+        <div class="ds-compact-footer-actions">
+          <button class="ds-compact-action" id="ds-compact-scan">Scan now</button>
+        </div>
+      </div>
+
+      <div class="ds-compact-progress"><div class="ds-compact-progress-fill" id="ds-compact-progress-fill"></div></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Toast -->
+<div id="ds-toast" class="ds-toast hidden"></div>
+
+<script src="main.js"></script>
+</body>
+</html>
