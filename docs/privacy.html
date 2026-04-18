@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy — Dayside</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0d1117; --surface: #161b22; --border: #30363d;
+      --text: #e6edf3; --muted: #8b949e; --accent: #58a6ff; --green: #3fb950;
+    }
+    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; line-height: 1.7; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 2rem; border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; background: var(--bg); z-index: 100;
+    }
+    .nav-logo { font-weight: 700; font-size: 1.1rem; color: var(--text); text-decoration: none; }
+    .nav-links { display: flex; gap: 1.5rem; font-size: 0.9rem; }
+    .nav-links a { color: var(--muted); }
+    .nav-links a:hover { color: var(--text); text-decoration: none; }
+    .container { max-width: 800px; margin: 0 auto; padding: 3rem 2rem 5rem; }
+    .page-label { color: var(--muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+    h1 { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .subtitle { color: var(--muted); margin-bottom: 3rem; }
+    hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+    h2 { font-size: 1.3rem; font-weight: 700; margin: 2.5rem 0 1rem; color: var(--accent); }
+    p { color: #c9d1d9; margin-bottom: 1rem; }
+    ul { padding-left: 1.5rem; margin-bottom: 1rem; }
+    li { color: #c9d1d9; margin-bottom: 0.4rem; }
+    strong { color: var(--text); }
+    .guarantee-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1rem; margin: 1.5rem 0;
+    }
+    .guarantee-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 1.2rem;
+    }
+    .guarantee-card .icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
+    .guarantee-card strong { display: block; margin-bottom: 0.3rem; }
+    .guarantee-card p { color: var(--muted); font-size: 0.88rem; margin: 0; }
+    footer { border-top: 1px solid var(--border); padding: 2rem; text-align: center; color: var(--muted); font-size: 0.85rem; }
+    footer a { color: var(--muted); }
+  </style>
+</head>
+<body>
+  <nav>
+    <a class="nav-logo" href="index.html">Dayside</a>
+    <div class="nav-links">
+      <a href="index.html#how-it-works">How it works</a>
+      <a href="index.html#download">Download</a>
+      <a href="employers.html">For employers</a>
+      <a href="https://github.com/sajucrajan/dayside" target="_blank">GitHub</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="page-label">Privacy Policy</div>
+    <h1>Privacy</h1>
+    <p class="subtitle">Dayside is a local, offline tool. This document describes exactly what data it accesses and what it does with it.</p>
+
+    <div class="guarantee-grid">
+      <div class="guarantee-card">
+        <div class="icon">🌐</div>
+        <strong>No network calls</strong>
+        <p>Dayside never connects to the internet. No telemetry, no analytics, no update checks.</p>
+      </div>
+      <div class="guarantee-card">
+        <div class="icon">🎙️</div>
+        <strong>No recording</strong>
+        <p>Screen, camera, and microphone are never accessed.</p>
+      </div>
+      <div class="guarantee-card">
+        <div class="icon">💾</div>
+        <strong>No persistent data</strong>
+        <p>Nothing is written to disk. When the app closes, nothing remains.</p>
+      </div>
+      <div class="guarantee-card">
+        <div class="icon">🔒</div>
+        <strong>No biometrics</strong>
+        <p>No face scan, voiceprint, or keystroke logging of any kind.</p>
+      </div>
+      <div class="guarantee-card">
+        <div class="icon">✋</div>
+        <strong>No process termination</strong>
+        <p>Dayside is strictly read-only. It never kills, suspends, or modifies any process.</p>
+      </div>
+      <div class="guarantee-card">
+        <div class="icon">✅</div>
+        <strong>Explicit consent</strong>
+        <p>No scan runs unless the user explicitly clicks "Start scan" after reading the consent screen.</p>
+      </div>
+    </div>
+    <hr>
+
+    <h2>What Dayside reads during a scan</h2>
+    <ul>
+      <li><strong>Running processes</strong> — names and paths, matched against a blocklist</li>
+      <li><strong>Open windows</strong> — titles and screen-capture exclusion flags</li>
+      <li><strong>Audio/video devices</strong> — device names, to detect virtual cameras and audio cables</li>
+      <li><strong>Browser tab titles</strong> — on Windows; titles and URLs on macOS</li>
+      <li><strong>System state</strong> — monitor count, RDP/screen-sharing session status</li>
+    </ul>
+    <p>All of this is processed locally on the candidate's machine and never transmitted anywhere.</p>
+    <hr>
+
+    <h2>Consent</h2>
+    <p>Every session begins with a consent screen that explains what the scan will do. No scan runs unless the user explicitly clicks "Start scan" after reading and accepting. Periodic re-scanning is off by default and requires the user to opt in.</p>
+    <hr>
+
+    <h2>Data shared with the interviewer</h2>
+    <p>The only data shared is what appears on the candidate's screen during their screen-share session — the scan results panel that both parties look at together. No data is transmitted electronically to the interviewer or to any third party.</p>
+    <hr>
+
+    <h2>Open source</h2>
+    <p>Dayside is fully open source under the Apache License 2.0. Anyone can read the code, build it from source, and verify these claims independently. There is no hidden logic, no obfuscated binary, and no server-side component.</p>
+    <p><a href="https://github.com/sajucrajan/dayside" target="_blank">View the source on GitHub →</a></p>
+  </div>
+
+  <footer>
+    <p>
+      <a href="index.html">Dayside</a> &nbsp;·&nbsp;
+      <a href="employers.html">For employers</a> &nbsp;·&nbsp;
+      <a href="https://github.com/sajucrajan/dayside" target="_blank">GitHub</a> &nbsp;·&nbsp;
+      Apache License 2.0
+    </p>
+  </footer>
+</body>
+</html>

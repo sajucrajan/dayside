@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>For Employers — Dayside</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0d1117; --surface: #161b22; --border: #30363d;
+      --text: #e6edf3; --muted: #8b949e; --accent: #58a6ff;
+      --green: #3fb950; --orange: #d29922; --red: #f85149;
+    }
+    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; line-height: 1.7; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 2rem; border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; background: var(--bg); z-index: 100;
+    }
+    .nav-logo { font-weight: 700; font-size: 1.1rem; color: var(--text); text-decoration: none; }
+    .nav-links { display: flex; gap: 1.5rem; font-size: 0.9rem; }
+    .nav-links a { color: var(--muted); }
+    .nav-links a:hover { color: var(--text); text-decoration: none; }
+    .container { max-width: 800px; margin: 0 auto; padding: 3rem 2rem 5rem; }
+    .page-label { color: var(--muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+    h1 { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; line-height: 1.2; }
+    .subtitle { color: var(--muted); font-size: 1rem; margin-bottom: 3rem; font-style: italic; }
+    hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+    h2 { font-size: 1.3rem; font-weight: 700; margin: 2.5rem 0 1rem; color: var(--accent); }
+    h3 { font-size: 1.05rem; font-weight: 600; margin: 1.8rem 0 0.6rem; }
+    p { color: #c9d1d9; margin-bottom: 1rem; }
+    ul, ol { padding-left: 1.5rem; margin-bottom: 1rem; }
+    li { color: #c9d1d9; margin-bottom: 0.4rem; }
+    strong { color: var(--text); }
+    em { color: var(--muted); }
+    blockquote {
+      border-left: 3px solid var(--border); padding: 1rem 1.5rem;
+      margin: 1.5rem 0; background: var(--surface); border-radius: 0 8px 8px 0;
+      color: var(--muted);
+    }
+    blockquote p { color: var(--muted); margin-bottom: 0.5rem; }
+    blockquote p:last-child { margin-bottom: 0; }
+    .checklist { list-style: none; padding-left: 0; }
+    .checklist li { display: flex; gap: 0.6rem; margin-bottom: 0.5rem; }
+    .checklist li::before { content: "☐"; color: var(--muted); flex-shrink: 0; }
+    .warning {
+      background: #2d1f00; border: 1px solid #d2992244; border-radius: 8px;
+      padding: 1rem 1.2rem; margin: 1.5rem 0; color: var(--orange);
+    }
+    code { background: var(--surface); padding: 0.1em 0.4em; border-radius: 4px; font-size: 0.9em; color: var(--accent); }
+    footer { border-top: 1px solid var(--border); padding: 2rem; text-align: center; color: var(--muted); font-size: 0.85rem; }
+    footer a { color: var(--muted); }
+  </style>
+</head>
+<body>
+  <nav>
+    <a class="nav-logo" href="index.html">Dayside</a>
+    <div class="nav-links">
+      <a href="index.html#how-it-works">How it works</a>
+      <a href="index.html#download">Download</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="https://github.com/sajucrajan/dayside" target="_blank">GitHub</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="page-label">Guidance</div>
+    <h1>For Employers Considering Dayside</h1>
+    <p class="subtitle">Practical guidance for hiring teams, recruiters, and interviewers. Not legal advice — consult employment counsel for your jurisdiction before deploying.</p>
+    <hr>
+
+    <h2>What Dayside is — and isn't — from your perspective</h2>
+    <p><strong>It is</strong> a candidate-operated, read-only diagnostic tool. The candidate downloads and runs the executable on their own machine, voluntarily, before the interview starts. The candidate explicitly clicks <strong>Start scan</strong> when they're ready — the tool does not scan automatically after consent. Results appear on the candidate's screen. During a screen-share, the interviewer can see the results and discuss anything flagged. The candidate may optionally enable a "Keep checking every 5 minutes" checkbox to catch anything launched during the interview, but this is off by default.</p>
+    <p>The tool stays visible during the interview in a small always-on-top pill ("compact mode") so both parties can see at a glance that the scan is current. If the candidate decides to close a flagged program, they do so themselves through their operating system's standard tools — Dayside never takes any action on the machine.</p>
+    <p><strong>It is not</strong> a proctoring tool, a background check, a biometric system, or a hiring algorithm. It does not make decisions. It does not send data to any server. It does not record. It does not terminate processes. It does not modify anything on the candidate's machine. It does not keep anything after it closes.</p>
+    <p><strong>It will not</strong> detect:</p>
+    <ul>
+      <li>AI interview assistants running on a second device (phone, tablet, another laptop)</li>
+      <li>Kernel-level tools designed to evade process enumeration</li>
+      <li>Anything the candidate chooses not to run the scanner on</li>
+      <li>Anything launched after the last scan if the candidate did not enable periodic re-scanning</li>
+    </ul>
+    <p><strong>It may</strong> produce false positives. Legitimate software — especially assistive technology — can share characteristics with invisible AI assistants. Treat every flag as a conversation starter, not a verdict.</p>
+    <hr>
+
+    <h2>The short responsible-deployment checklist</h2>
+    <ul class="checklist">
+      <li>Given candidates advance written notice that you'll ask them to run a pre-interview machine check</li>
+      <li>Explained that the scan is candidate-initiated — they consent, then click Start scan</li>
+      <li>Mentioned that periodic re-scanning is optional — the candidate chooses</li>
+      <li>Mentioned that the tool stays visible during the interview as an always-on-top pill</li>
+      <li>Offered an alternative for candidates who cannot or will not run the tool</li>
+      <li>Established an accommodations process for candidates who rely on assistive technology</li>
+      <li>Trained your interviewers on how to interpret flags and what to do with false positives</li>
+      <li>Decided who reviews the results and how they're documented in the hiring file</li>
+      <li>Reviewed your jurisdiction's requirements for pre-employment screening</li>
+      <li>Reviewed your own privacy notices to confirm the scan is described accurately</li>
+    </ul>
+    <hr>
+
+    <h2>Pre-interview notice template</h2>
+    <p>Send something like this with the interview invitation, at least 48 hours before:</p>
+    <blockquote>
+      <p><strong>About your upcoming interview</strong></p>
+      <p>To ensure a fair interview environment for all candidates, we'll ask you to run a short pre-interview machine check at the start of the call. The tool is called Dayside; it's an open-source, candidate-operated diagnostic that looks for known AI interview assistants on the machine you'll use for the interview.</p>
+      <ul>
+        <li>Initial scan: roughly 10 seconds</li>
+        <li>Data sent off your machine: none</li>
+        <li>Recording: none</li>
+        <li>The tool is read-only — it never closes, modifies, or changes anything on your machine</li>
+      </ul>
+      <p><strong>If you cannot run the tool</strong>, for any reason, please reply and we'll arrange an alternative.</p>
+      <p><strong>If you rely on assistive software</strong>, please let us know in advance so we can interpret any results correctly. Running these tools will never affect your candidacy.</p>
+    </blockquote>
+    <hr>
+
+    <h2>Training interviewers</h2>
+    <h3>A flag is not a verdict</h3>
+    <p>Every row on the scan results is a signal that deserves a question, not a conclusion. "I see Otter.ai running — tell me how you use it?" leads to useful information. "You have Otter.ai, so you're disqualified" leads to a lawsuit.</p>
+    <h3>Expect false positives</h3>
+    <p>Screen recorders, meeting notetakers, password managers, streaming software, virtual cameras, remote-access tools — all can flag. The candidate's explanation is data. Accept it unless something is itself off.</p>
+    <h3>Never ask about disabilities</h3>
+    <p>If the flagged item turns out to be assistive technology, accept "that's an accessibility tool I use" as a complete answer. Under the ADA you are prohibited from asking about disabilities before extending an offer.</p>
+    <h3>Periodic re-scanning is the candidate's choice</h3>
+    <p>Do not pressure the candidate to enable the "Keep checking every 5 minutes" option. Both choices are legitimate.</p>
+    <hr>
+
+    <h2>What to do with the results</h2>
+    <p><strong>Do not retain them.</strong> No screenshots, no notes, no copy-pasted lists. The only thing in the hiring file should be a short summary like "pre-interview machine check completed, no critical flags."</p>
+    <p><strong>Do not use them as a hiring signal on their own.</strong> A clean scan does not mean the candidate is qualified. A flagged scan does not mean they're disqualified.</p>
+    <p><strong>Do not share them outside the immediate hiring team.</strong>
+    <hr>
+
+    <h2>Refusal is allowed</h2>
+    <p>Some candidates will decline. Reasons vary and all are legitimate. <strong>Refusal is not evidence of cheating.</strong> Offer an alternative — typically a walk-through of Task Manager or Activity Monitor. Document the refusal and the alternative used. Do not let refusal alone drive a decision.</p>
+    <hr>
+
+    <h2>What NOT to do</h2>
+    <ul>
+      <li>Do not require candidates to install the tool on company-issued devices from their current employer</li>
+      <li>Do not run the tool yourself on the candidate's behalf</li>
+      <li>Do not pressure candidates to enable periodic re-scanning</li>
+      <li>Do not keep the results — no screenshots, no video, no log files</li>
+      <li>Do not use Dayside on candidates who have not received the pre-interview notice</li>
+      <li>Do not treat refusal as dispositive</li>
+      <li>Do not rebrand or modify the tool to misrepresent what it does</li>
+      <li>Do not use the tool for employee monitoring</li>
+    </ul>
+    <hr>
+
+    <h2>A word on proportionality</h2>
+    <p>Dayside is appropriate when the role involves significant coding, reasoning, or communication that would be materially affected by AI-assistant use. It is <strong>not</strong> appropriate for casual first-round conversations, behavioral interviews, or junior roles where the interview is primarily about motivation and fit.</p>
+    <p>If the tool finds itself being used in every interview, at every stage, for every role, something has gone wrong. It is a targeted instrument, not standard-issue surveillance.</p>
+    <hr>
+
+    <h2>Jurisdiction-specific notes</h2>
+    <div class="warning">This is a starting summary, not comprehensive. Verify with local counsel.</div>
+    <h3>United States</h3>
+    <ul>
+      <li><strong>ADA:</strong> You must accommodate candidates who use assistive technology.</li>
+      <li><strong>Illinois BIPA:</strong> Dayside does not collect biometric data, so BIPA does not apply.</li>
+      <li><strong>California CCPA / CPRA:</strong> Job applicants are covered. Include Dayside in your candidate privacy notice.</li>
+      <li><strong>New York City Local Law 144:</strong> Disclosure may be required if Dayside is a substantial factor in hiring decisions.</li>
+    </ul>
+    <h3>European Union and United Kingdom</h3>
+    <ul>
+      <li><strong>GDPR lawful basis:</strong> Rely on legitimate interests (Article 6(1)(f)) and document a Legitimate Interests Assessment.</li>
+      <li><strong>DPIA:</strong> Almost certainly required under Article 35.</li>
+      <li><strong>EU AI Act:</strong> Dayside is rule-based pattern matching — likely not "AI" under the Act's definition.</li>
+    </ul>
+    <h3>Canada, Australia, and others</h3>
+    <p>PIPEDA, LGPD, PDPA, and similar frameworks broadly require notice and lawful basis. Treat as requiring explicit notice and lawful basis; legitimate interest is typically available.</p>
+    <hr>
+
+    <h2>Questions &amp; feedback</h2>
+    <ul>
+      <li><strong>Bugs:</strong> open an issue on <a href="https://github.com/sajucrajan/dayside/issues" target="_blank">GitHub</a></li>
+      <li><strong>False-positive reports:</strong> open a PR against the allowlist</li>
+      <li><strong>Missing AI interview assistants:</strong> open a PR against the blocklist</li>
+      <li><strong>Security issues:</strong> use GitHub's private security advisory feature</li>
+      <li><strong>Legal questions:</strong> consult your own counsel</li>
+    </ul>
+  </div>
+
+  <footer>
+    <p>
+      <a href="index.html">Dayside</a> &nbsp;·&nbsp;
+      <a href="privacy.html">Privacy</a> &nbsp;·&nbsp;
+      <a href="https://github.com/sajucrajan/dayside" target="_blank">GitHub</a> &nbsp;·&nbsp;
+      Apache License 2.0
+    </p>
+  </footer>
+</body>
+</html>
