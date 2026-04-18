@@ -55,11 +55,14 @@ jobs:
       - name: Build
         run: wails build -clean -platform darwin/universal
 
+      - name: Zip macOS app bundle
+        run: ditto -c -k --sequesterRsrc --keepParent build/bin/Dayside.app build/bin/Dayside-macOS.zip
+
       - name: Upload macOS artifact
         uses: actions/upload-artifact@v4
         with:
           name: macos-build
-          path: build/bin/Dayside.app
+          path: build/bin/Dayside-macOS.zip
 
   release:
     needs: [build-windows, build-macos]
@@ -76,4 +79,4 @@ jobs:
         with:
           files: |
             windows-build/Dayside.exe
-            macos-build/Dayside.app
+            macos-build/Dayside-macOS.zip
