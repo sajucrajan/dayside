@@ -1,0 +1,19 @@
+{
+  "$schema": "https://wails.io/schemas/config.v2.json",
+  "name": "dayside",
+  "outputfilename": "Dayside",
+  "frontend:install": "",
+  "frontend:build": "",
+  "frontend:dev:watcher": "",
+  "frontend:dev:serverUrl": "",
+  "author": {
+    "name": "Dayside"
+  },
+  "info": {
+    "companyName": "Dayside",
+    "productName": "Dayside",
+    "productVersion": "0.1.0",
+    "copyright": "",
+    "comments": "Pre-interview machine check - reveals hidden AI copilots"
+  }
+}

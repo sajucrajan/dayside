@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<title>Spectre Check · Variant 1 · Terminal Cool</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root, [data-theme="dark"] {
+    --bg: #0d1117;
+    --bg-1: #161b22;
+    --bg-2: #1c2129;
+    --bg-hover: #22272e;
+    --border: #30363d;
+    --border-bright: #484f58;
+    --text: #e6edf3;
+    --text-dim: #8d96a0;
+    --text-muted: #6e7681;
+    --green: #3fb950;
+    --green-bg: rgba(63, 185, 80, 0.10);
+    --yellow: #d29922;
+    --yellow-bg: rgba(210, 153, 34, 0.10);
+    --red: #f85149;
+    --red-bg: rgba(248, 81, 73, 0.10);
+    --accent: #58a6ff;
+    --accent-bg: rgba(88, 166, 255, 0.12);
+    --scanline: rgba(255,255,255,0.01);
+    --kill-text: #000;
+  }
+
+  [data-theme="light"] {
+    --bg: #fafaf7;
+    --bg-1: #f1f0ea;
+    --bg-2: #e9e7df;
+    --bg-hover: #e4e1d8;
+    --border: #d4d1c4;
+    --border-bright: #a6a396;
+    --text: #1c1c1a;
+    --text-dim: #4a4a44;
+    --text-muted: #7a7770;
+    --green: #217a3a;
+    --green-bg: rgba(33, 122, 58, 0.08);
+    --yellow: #9c6e0f;
+    --yellow-bg: rgba(156, 110, 15, 0.08);
+    --red: #c93a36;
+    --red-bg: rgba(201, 58, 54, 0.08);
+    --accent: #1c5ba3;
+    --accent-bg: rgba(28, 91, 163, 0.10);
+    --scanline: rgba(0,0,0,0.018);
+    --kill-text: #fff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 13px;
+    line-height: 1.5;
+    height: 100vh;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+    transition: background 0.2s, color 0.2s;
+  }
+  body { display: flex; flex-direction: column; }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, var(--scanline) 0px, var(--scanline) 1px, transparent 1px, transparent 3px);
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  header {
+    background: var(--bg-1);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  .brand { display: flex; align-items: center; gap: 12px; font-size: 13px; }
+  .brand .prompt { color: var(--green); }
+  .brand .name { color: var(--text); font-weight: 600; }
+  .brand .flag { color: var(--text-muted); }
+
+  .meta { display: flex; align-items: center; gap: 16px; font-size: 11px; color: var(--text-muted); }
+  .meta .pulse {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--green);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(63,185,80,0.5); }
+    70% { box-shadow: 0 0 0 6px rgba(63,185,80,0); }
+    100% { box-shadow: 0 0 0 0 rgba(63,185,80,0); }
+  }
+
+  .theme-switcher {
+    display: inline-flex;
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px;
+    gap: 1px;
+  }
+  .theme-switcher button {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    width: 26px; height: 22px;
+    cursor: pointer;
+    border-radius: 2px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: inherit;
+  }
+  .theme-switcher button:hover { color: var(--text-dim); }
+  .theme-switcher button.active {
+    background: var(--bg);
+    color: var(--accent);
+  }
+  .theme-switcher svg { width: 12px; height: 12px; }
+
+  .statusbar {
+    background: var(--bg-1);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 20px;
+    display: flex;
+    gap: 40px;
+    flex-shrink: 0;
+  }
+  .stat { display: flex; flex-direction: column; gap: 2px; }
+  .stat-value {
+    font-size: 22px;
+    font-weight: 600;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .stat-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+  }
+  .stat.red .stat-value { color: var(--red); }
+  .stat.yellow .stat-value { color: var(--yellow); }
+  .stat.green .stat-value { color: var(--green); }
+
+  nav {
+    background: var(--bg);
+    padding: 0 20px;
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .tab {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    padding: 10px 16px;
+    font-family: inherit;
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+  }
+  .tab:hover { color: var(--text-dim); }
+  .tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+  .tab .num { color: var(--text-muted); font-size: 11px; }
+  .tab.active .num { color: var(--accent); }
+
+  main { flex: 1; overflow-y: auto; padding: 0; }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  .col-header {
+    display: grid;
+    grid-template-columns: 30px 90px 1fr 280px 140px 100px;
+    gap: 16px;
+    padding: 10px 20px;
+    background: var(--bg-1);
+    border-bottom: 1px solid var(--border);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+
+  .process-row {
+    display: grid;
+    grid-template-columns: 30px 90px 1fr 280px 140px 100px;
+    gap: 16px;
+    padding: 9px 20px;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.1s;
+    font-size: 12px;
+    position: relative;
+  }
+  .process-row:hover { background: var(--bg-hover); }
+
+  .process-row.red    { background: linear-gradient(90deg, rgba(248,81,73,0.06), transparent 40%); }
+  .process-row.yellow { background: linear-gradient(90deg, rgba(210,153,34,0.04), transparent 40%); }
+  [data-theme="light"] .process-row.red    { background: linear-gradient(90deg, rgba(201,58,54,0.07), transparent 40%); }
+  [data-theme="light"] .process-row.yellow { background: linear-gradient(90deg, rgba(156,110,15,0.06), transparent 40%); }
+  .process-row.protected { opacity: 0.5; cursor: not-allowed; }
+
+  .sev-indicator { display: flex; align-items: center; gap: 6px; }
+  .sev-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .sev-dot.red    { background: var(--red); box-shadow: 0 0 6px var(--red); }
+  .sev-dot.yellow { background: var(--yellow); }
+  .sev-dot.green  { background: var(--green); }
+
+  input[type="checkbox"] {
+    appearance: none;
+    width: 14px; height: 14px;
+    border: 1px solid var(--border-bright);
+    background: var(--bg-1);
+    border-radius: 2px;
+    cursor: pointer;
+    position: relative;
+  }
+  input[type="checkbox"]:checked {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  input[type="checkbox"]:checked::after {
+    content: '';
+    position: absolute;
+    left: 3px; top: 0px;
+    width: 4px; height: 8px;
+    border: solid var(--bg);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+  input[type="checkbox"]:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  .pid {
+    color: var(--text-muted);
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .proc-name { color: var(--text); font-weight: 500; }
+  .window-title {
+    color: var(--text-dim);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: "Inter", sans-serif;
+    font-size: 12px;
+  }
+
+  .badges { display: flex; gap: 4px; flex-wrap: wrap; }
+  .badge {
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .badge.red    { background: var(--red-bg);    color: var(--red);    border: 1px solid var(--red); }
+  .badge.yellow { background: var(--yellow-bg); color: var(--yellow); border: 1px solid var(--yellow); }
+  .badge.gray   { background: var(--bg-hover);  color: var(--text-muted); border: 1px solid var(--border); }
+
+  .reason { color: var(--text-muted); font-size: 11px; }
+
+  footer {
+    background: var(--bg-1);
+    border-top: 1px solid var(--border);
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+    font-size: 11px;
+  }
+  .keymap { display: flex; gap: 14px; color: var(--text-muted); }
+  .keymap span { color: var(--text-dim); }
+  .keymap kbd { color: var(--accent); font-family: inherit; font-weight: 500; }
+
+  .action-btn {
+    background: var(--red);
+    color: var(--kill-text);
+    border: none;
+    padding: 6px 12px;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    border-radius: 2px;
+  }
+  .action-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  .scan-btn {
+    background: transparent;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 5px 10px;
+    font-family: inherit;
+    font-size: 11px;
+    cursor: pointer;
+    border-radius: 2px;
+  }
+  .scan-btn:hover { background: var(--accent-bg); }
+
+  /* Browser Tabs */
+  .tabs-section-hd {
+    padding: 14px 20px 12px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .tabs-section-hd::before { content: '▸ '; color: var(--accent); }
+
+  .btab-row {
+    display: grid;
+    grid-template-columns: 32px 1fr 220px 90px;
+    gap: 16px;
+    padding: 10px 20px;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.1s;
+    font-size: 12px;
+    position: relative;
+  }
+  .btab-row.red    { background: linear-gradient(90deg, rgba(248,81,73,0.06), transparent 40%); border-left: 2px solid var(--red); }
+  .btab-row.yellow { background: linear-gradient(90deg, rgba(210,153,34,0.04), transparent 40%); border-left: 2px solid var(--yellow); }
+  [data-theme="light"] .btab-row.red    { background: linear-gradient(90deg, rgba(201,58,54,0.07), transparent 40%); }
+  [data-theme="light"] .btab-row.yellow { background: linear-gradient(90deg, rgba(156,110,15,0.06), transparent 40%); }
+  .btab-row:hover { background: var(--bg-hover); }
+
+  .btab-favicon {
+    width: 24px; height: 24px;
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    color: var(--text-dim);
+    font-weight: 600;
+  }
+  .btab-info { min-width: 0; }
+  .btab-title {
+    color: var(--text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: "Inter", sans-serif;
+    font-size: 12px;
+  }
+  .btab-url { color: var(--text-muted); font-size: 11px; margin-top: 2px; }
+  .btab-browser { color: var(--text-muted); font-size: 11px; text-align: right; }
+
+  /* Audio/Video */
+  .av-section {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .av-section h3 {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    font-weight: 500;
+  }
+  .av-section h3::before { content: '▸ '; color: var(--accent); }
+  .av-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 16px;
+    padding: 10px 0;
+    align-items: center;
+    border-bottom: 1px dashed var(--border);
+    font-size: 12px;
+  }
+  .av-row:last-child { border-bottom: none; }
+  .av-row .av-name { color: var(--text); }
+  .av-row .av-reason { color: var(--text-muted); font-size: 10px; margin-top: 2px; }
+  .av-row.red .av-name { color: var(--red); }
+
+  /* System */
+  .sys-section { padding: 20px; }
+  .sys-section h3 {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+    font-weight: 500;
+  }
+  .sys-section h3::before { content: '▸ '; color: var(--accent); }
+  .sys-kv {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 2px 16px;
+    font-size: 12px;
+  }
+  .sys-kv dt {
+    color: var(--text-muted);
+    font-size: 11px;
+    padding: 7px 0;
+  }
+  .sys-kv dd {
+    color: var(--text);
+    padding: 7px 0;
+    border-bottom: 1px dashed var(--border);
+  }
+  .sys-kv dd.ok { color: var(--green); }
+
+  /* About */
+  .about-panel {
+    padding: 28px;
+    max-width: 760px;
+    font-family: "Inter", sans-serif;
+  }
+  .about-panel h2 {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 14px;
+    color: var(--accent);
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+  .about-panel h2::before { content: '# '; color: var(--text-muted); }
+  .about-panel p {
+    color: var(--text-dim);
+    font-size: 13px;
+    line-height: 1.65;
+    margin-bottom: 12px;
+  }
+  .about-panel .lede {
+    color: var(--text);
+    font-size: 14px;
+    margin-bottom: 22px;
+  }
+  .about-panel h3 {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 12px;
+    color: var(--text);
+    margin: 22px 0 8px;
+    font-weight: 600;
+  }
+  .about-panel h3::before { content: '## '; color: var(--text-muted); }
+  .legend { display: flex; gap: 8px; margin: 14px 0; }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: var(--bg-1);
+    border: 1px solid var(--border);
+    font-size: 11px;
+    flex: 1;
+    font-family: "JetBrains Mono", monospace;
+  }
+  .legend-item strong { color: var(--text); font-weight: 600; }
+  .legend-item span { color: var(--text-muted); font-size: 10px; display: block; margin-top: 2px; font-family: "Inter", sans-serif; }
+  .about-version {
+    margin-top: 30px;
+    font-size: 11px;
+    color: var(--text-muted);
+    font-family: "JetBrains Mono", monospace;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <span class="prompt">$</span>
+    <span class="name">spectre-check</span>
+    <span class="flag">--scan</span>
+    <span class="flag">--verbose</span>
+  </div>
+  <div class="meta">
+    <span>host: SAJU-DESKTOP-01</span>
+    <span>blocklist v1.2.1</span>
+    <span>1847ms</span>
+    <span class="pulse"></span>
+    <div class="theme-switcher" id="theme-switcher">
+      <button data-set-theme="light" title="Light">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+      </button>
+      <button data-set-theme="dark" class="active" title="Dark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <button data-set-theme="auto" title="Auto (follow OS)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      </button>
+    </div>
+    <button class="scan-btn">rescan</button>
+  </div>
+</header>
+
+<div class="statusbar">
+  <div class="stat red"><div class="stat-value">09</div><div class="stat-label">critical</div></div>
+  <div class="stat yellow"><div class="stat-value">02</div><div class="stat-label">warning</div></div>
+  <div class="stat green"><div class="stat-value">14</div><div class="stat-label">clean</div></div>
+  <div class="stat"><div class="stat-value">128</div><div class="stat-label">processes</div></div>
+  <div class="stat"><div class="stat-value">8</div><div class="stat-label">tabs</div></div>
+  <div class="stat"><div class="stat-value">2</div><div class="stat-label">monitors</div></div>
+  <div class="stat"><div class="stat-value">0</div><div class="stat-label">remote</div></div>
+</div>
+
+<nav>
+  <button class="tab active" data-tab="processes">processes <span class="num">[25]</span></button>
+  <button class="tab" data-tab="browsertabs">tabs <span class="num">[8]</span></button>
+  <button class="tab" data-tab="devices">devices <span class="num">[6]</span></button>
+  <button class="tab" data-tab="system">system</button>
+  <button class="tab" data-tab="about">about</button>
+</nav>
+
+<main>
+
+<div class="tab-panel active" data-tab-panel="processes">
+  <div class="col-header">
+    <div></div><div>pid</div><div>process · window</div><div>signals</div><div>reason</div><div>state</div>
+  </div>
+
+  <div class="process-row red">
+    <div class="sev-indicator"><input type="checkbox" checked /></div>
+    <div class="pid">14229</div>
+    <div>
+      <div class="proc-name">cluely.exe</div>
+      <div class="window-title">Cluely — Invisible AI Assistant</div>
+    </div>
+    <div class="badges">
+      <span class="badge red">copilot</span>
+      <span class="badge red">hidden</span>
+      <span class="badge red">topmost</span>
+    </div>
+    <div class="reason">known:blocklist</div>
+    <div><span class="sev-dot red"></span> <span style="color: var(--red); font-size: 11px;">CRITICAL</span></div>
+  </div>
+
+  <div class="process-row red">
+    <div class="sev-indicator"><input type="checkbox" /></div>
+    <div class="pid">27912</div>
+    <div>
+      <div class="proc-name">msedge.exe</div>
+      <div class="window-title">Interview Copilot — Never Blank on a Question Again</div>
+    </div>
+    <div class="badges"><span class="badge red">copilot-title</span></div>
+    <div class="reason">title:interviewcopilot</div>
+    <div><span class="sev-dot red"></span> <span style="color: var(--red); font-size: 11px;">CRITICAL</span></div>
+  </div>
+
+  <div class="process-row red">
+    <div class="sev-indicator"><input type="checkbox" /></div>
+    <div class="pid">02348</div>
+    <div>
+      <div class="proc-name">ApplicationFrameHost.exe</div>
+      <div class="window-title">Settings +1 more</div>
+    </div>
+    <div class="badges"><span class="badge red">cloaked</span></div>
+    <div class="reason">win32:cloaked</div>
+    <div><span class="sev-dot red"></span> <span style="color: var(--red); font-size: 11px;">CRITICAL</span></div>
+  </div>
+
+  <div class="process-row red">
+    <div class="sev-indicator"><input type="checkbox" /></div>
+    <div class="pid">20076</div>
+    <div>
+      <div class="proc-name">chrome.exe</div>
+      <div class="window-title">Interview copilot website inquiry · Claude</div>
+    </div>
+    <div class="badges"><span class="badge red">copilot-title</span></div>
+    <div class="reason">title:interview+copilot</div>
+    <div><span class="sev-dot red"></span> <span style="color: var(--red); font-size: 11px;">CRITICAL</span></div>
+  </div>
+
+  <div class="process-row yellow">
+    <div class="sev-indicator"><input type="checkbox" /></div>
+    <div class="pid">28400</div>
+    <div>
+      <div class="proc-name">Microsoft.Media.Player.exe</div>
+      <div class="window-title">Media Player</div>
+    </div>
+    <div class="badges">
+      <span class="badge yellow">unsigned</span>
+      <span class="badge yellow">cloaked</span>
+    </div>
+    <div class="reason">sig:missing</div>
+    <div><span class="sev-dot yellow"></span> <span style="color: var(--yellow); font-size: 11px;">WARNING</span></div>
+  </div>
+
+  <div class="process-row yellow">
+    <div class="sev-indicator"><input type="checkbox" /></div>
+    <div class="pid">28600</div>
+    <div>
+      <div class="proc-name">SystemSettings.exe</div>
+      <div class="window-title">Settings</div>
+    </div>
+    <div class="badges"><span class="badge yellow">cloaked</span></div>
+    <div class="reason">win32:cloaked</div>
+    <div><span class="sev-dot yellow"></span> <span style="color: var(--yellow); font-size: 11px;">WARNING</span></div>
+  </div>
+
+  <div class="process-row protected">
+    <div class="sev-indicator"><input type="checkbox" disabled /></div>
+    <div class="pid">18472</div>
+    <div>
+      <div class="proc-name">Teams.exe</div>
+      <div class="window-title">Interview with Saju · Microsoft Teams</div>
+    </div>
+    <div class="badges"><span class="badge gray">protected</span></div>
+    <div class="reason">role:interview</div>
+    <div><span class="sev-dot green"></span> <span style="color: var(--text-muted); font-size: 11px;">LOCKED</span></div>
+  </div>
+
+  <div class="process-row">
+    <div class="sev-indicator"><input type="checkbox" /></div>
+    <div class="pid">08932</div>
+    <div>
+      <div class="proc-name">1Password.exe</div>
+      <div class="window-title">1Password 8</div>
+    </div>
+    <div class="badges"><span class="badge gray">allowlist</span></div>
+    <div class="reason">pwmgr:affinity-ok</div>
+    <div><span class="sev-dot green"></span> <span style="color: var(--green); font-size: 11px;">CLEAN</span></div>
+  </div>
+
+  <div class="process-row">
+    <div class="sev-indicator"><input type="checkbox" /></div>
+    <div class="pid">11204</div>
+    <div>
+      <div class="proc-name">Spotify.exe</div>
+      <div class="window-title">Spotify Premium</div>
+    </div>
+    <div class="badges"></div>
+    <div class="reason">—</div>
+    <div><span class="sev-dot green"></span> <span style="color: var(--green); font-size: 11px;">CLEAN</span></div>
+  </div>
+
+  <div class="process-row">
+    <div class="sev-indicator"><input type="checkbox" /></div>
+    <div class="pid">05512</div>
+    <div>
+      <div class="proc-name">Code.exe</div>
+      <div class="window-title">spectre-check — Visual Studio Code</div>
+    </div>
+    <div class="badges"></div>
+    <div class="reason">—</div>
+    <div><span class="sev-dot green"></span> <span style="color: var(--green); font-size: 11px;">CLEAN</span></div>
+  </div>
+</div>
+
+<div class="tab-panel" data-tab-panel="browsertabs">
+  <div class="tabs-section-hd">
+    <span>browser tabs · 8 found · 2 browsers</span>
+    <span>chrome: 4 · edge: 4</span>
+  </div>
+
+  <div class="btab-row red">
+    <div class="btab-favicon">IC</div>
+    <div class="btab-info">
+      <div class="btab-title">Interview Copilot — Never Blank on a Question Again</div>
+      <div class="btab-url">interviewcopilot.io</div>
+    </div>
+    <div class="reason">domain:interviewcopilot</div>
+    <div class="btab-browser">msedge.exe</div>
+  </div>
+
+  <div class="btab-row red">
+    <div class="btab-favicon">C</div>
+    <div class="btab-info">
+      <div class="btab-title">Cluely — The AI That's Always On</div>
+      <div class="btab-url">cluely.com/dashboard</div>
+    </div>
+    <div class="reason">domain:cluely</div>
+    <div class="btab-browser">chrome.exe</div>
+  </div>
+
+  <div class="btab-row yellow">
+    <div class="btab-favicon">CG</div>
+    <div class="btab-info">
+      <div class="btab-title">ChatGPT</div>
+      <div class="btab-url">chatgpt.com</div>
+    </div>
+    <div class="reason">llm:openai</div>
+    <div class="btab-browser">chrome.exe</div>
+  </div>
+
+  <div class="btab-row">
+    <div class="btab-favicon">GM</div>
+    <div class="btab-info">
+      <div class="btab-title">Inbox · Gmail</div>
+      <div class="btab-url">mail.google.com</div>
+    </div>
+    <div class="reason">—</div>
+    <div class="btab-browser">chrome.exe</div>
+  </div>
+
+  <div class="btab-row">
+    <div class="btab-favicon">SO</div>
+    <div class="btab-info">
+      <div class="btab-title">Kafka sink connector guide — Stack Overflow</div>
+      <div class="btab-url">stackoverflow.com/questions/...</div>
+    </div>
+    <div class="reason">—</div>
+    <div class="btab-browser">msedge.exe</div>
+  </div>
+
+  <div class="btab-row">
+    <div class="btab-favicon">GH</div>
+    <div class="btab-info">
+      <div class="btab-title">spectre-check — GitHub</div>
+      <div class="btab-url">github.com/saju/spectre-check</div>
+    </div>
+    <div class="reason">—</div>
+    <div class="btab-browser">chrome.exe</div>
+  </div>
+
+  <div class="btab-row">
+    <div class="btab-favicon">SF</div>
+    <div class="btab-info">
+      <div class="btab-title">Snowflake Console</div>
+      <div class="btab-url">app.snowflake.com</div>
+    </div>
+    <div class="reason">—</div>
+    <div class="btab-browser">msedge.exe</div>
+  </div>
+
+  <div class="btab-row">
+    <div class="btab-favicon">AZ</div>
+    <div class="btab-info">
+      <div class="btab-title">Azure Portal</div>
+      <div class="btab-url">portal.azure.com</div>
+    </div>
+    <div class="reason">—</div>
+    <div class="btab-browser">msedge.exe</div>
+  </div>
+</div>
+
+<div class="tab-panel" data-tab-panel="devices">
+  <div class="av-section">
+    <h3>video devices</h3>
+    <div class="av-row red">
+      <div>
+        <div class="av-name">OBS Virtual Camera</div>
+        <div class="av-reason">matches pattern: obs virtual camera</div>
+      </div>
+      <span class="badge red">virtual</span>
+    </div>
+    <div class="av-row">
+      <div class="av-name">HP Wide Vision HD Camera</div>
+      <span class="badge gray">physical</span>
+    </div>
+  </div>
+
+  <div class="av-section">
+    <h3>audio devices</h3>
+    <div class="av-row red">
+      <div>
+        <div class="av-name">VB-Audio Virtual Cable</div>
+        <div class="av-reason">matches pattern: vb-audio</div>
+      </div>
+      <span class="badge red">virtual</span>
+    </div>
+    <div class="av-row">
+      <div class="av-name">Realtek High Definition Audio</div>
+      <span class="badge gray">physical</span>
+    </div>
+    <div class="av-row">
+      <div class="av-name">Internal Microphone</div>
+      <span class="badge gray">physical</span>
+    </div>
+    <div class="av-row">
+      <div class="av-name">Speakers (Realtek Audio)</div>
+      <span class="badge gray">physical</span>
+    </div>
+  </div>
+</div>
+
+<div class="tab-panel" data-tab-panel="system">
+  <div class="sys-section">
+    <h3>host</h3>
+    <dl class="sys-kv">
+      <dt>hostname</dt><dd>SAJU-DESKTOP-01</dd>
+      <dt>user</dt><dd>sajuc</dd>
+      <dt>os</dt><dd>Windows 11 Pro · 24H2 · Build 26100</dd>
+      <dt>architecture</dt><dd>amd64</dd>
+      <dt>monitors</dt><dd>2 attached</dd>
+      <dt>remote session</dt><dd class="ok">no</dd>
+      <dt>virtual machine</dt><dd class="ok">no</dd>
+    </dl>
+  </div>
+
+  <div class="sys-section">
+    <h3>scan diagnostics</h3>
+    <dl class="sys-kv">
+      <dt>started</dt><dd>2026-04-18 23:40:51.184</dd>
+      <dt>duration</dt><dd>1847 ms</dd>
+      <dt>processes enumerated</dt><dd>128</dd>
+      <dt>windows enumerated</dt><dd>42</dd>
+      <dt>tabs read</dt><dd>8 across 2 browsers</dd>
+      <dt>blocklist version</dt><dd>2026-04-17 · v1.2.1</dd>
+      <dt>build</dt><dd>spectre-check/v1.2.1 (windows/amd64)</dd>
+    </dl>
+  </div>
+</div>
+
+<div class="tab-panel" data-tab-panel="about">
+  <div class="about-panel">
+    <h2>about spectre-check</h2>
+    <p class="lede">Spectre Check runs once before your interview. It enumerates every running process, every visible window, every audio and video device, and every open browser tab. Combinations commonly used by interview copilots are flagged.</p>
+
+    <h3>severity levels</h3>
+    <div class="legend">
+      <div class="legend-item">
+        <span class="sev-dot red"></span>
+        <div><strong>CRITICAL</strong><span>known copilot, remote-access tool, or hidden window</span></div>
+      </div>
+      <div class="legend-item">
+        <span class="sev-dot yellow"></span>
+        <div><strong>WARNING</strong><span>unsigned, cloaked, or unusual install location</span></div>
+      </div>
+      <div class="legend-item">
+        <span class="sev-dot green"></span>
+        <div><strong>CLEAN</strong><span>no suspicious signals</span></div>
+      </div>
+    </div>
+
+    <h3>what it can't catch</h3>
+    <p>A second device (phone, tablet) running a copilot nearby. Kernel-level tools that hook the detection APIs themselves. Browser tab URLs on Windows (titles only; URLs only on macOS via AppleScript).</p>
+
+    <h3>license</h3>
+    <p>Proprietary. Internal use. Do not redistribute.</p>
+
+    <p class="about-version">spectre-check v1.2.1 · build 2026-04-17 · blocklist 2026-04-17</p>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  <div class="keymap">
+    <span><kbd>j/k</kbd> nav</span>
+    <span><kbd>x</kbd> select</span>
+    <span><kbd>a</kbd> all</span>
+    <span><kbd>f</kbd> filter</span>
+    <span><kbd>/</kbd> search</span>
+    <span><kbd>K</kbd> kill</span>
+    <span><kbd>r</kbd> rescan</span>
+    <span><kbd>?</kbd> help</span>
+  </div>
+  <button class="action-btn" disabled>KILL 1 SELECTED</button>
+</footer>
+
+<script>
+  document.querySelectorAll('.tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelector(`[data-tab-panel="${btn.dataset.tab}"]`).classList.add('active');
+    });
+  });
+
+  const switcher = document.getElementById('theme-switcher');
+  const mql = window.matchMedia('(prefers-color-scheme: light)');
+
+  function applyTheme(mode) {
+    if (mode === 'auto') {
+      document.documentElement.setAttribute('data-theme', mql.matches ? 'light' : 'dark');
+    } else {
+      document.documentElement.setAttribute('data-theme', mode);
+    }
+    switcher.querySelectorAll('button').forEach(b => {
+      b.classList.toggle('active', b.dataset.setTheme === mode);
+    });
+    localStorage.setItem('spectre-theme-v1', mode);
+  }
+
+  switcher.addEventListener('click', (e) => {
+    const btn = e.target.closest('button[data-set-theme]');
+    if (!btn) return;
+    applyTheme(btn.dataset.setTheme);
+  });
+
+  mql.addEventListener('change', () => {
+    const current = localStorage.getItem('spectre-theme-v1') || 'dark';
+    if (current === 'auto') applyTheme('auto');
+  });
+
+  applyTheme(localStorage.getItem('spectre-theme-v1') || 'dark');
+</script>
+
+</body>
+</html>

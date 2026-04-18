@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleName</key>
+    <string>{{.Info.ProductName}}</string>
+    <key>CFBundleExecutable</key>
+    <string>{{.Info.ProductName}}</string>
+    <key>CFBundleIdentifier</key>
+    <string>io.spectrecheck.app</string>
+    <key>CFBundleVersion</key>
+    <string>{{.Info.ProductVersion}}</string>
+    <key>CFBundleShortVersionString</key>
+    <string>{{.Info.ProductVersion}}</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleSignature</key>
+    <string>????</string>
+    <key>LSMinimumSystemVersion</key>
+    <string>10.15</string>
+    <key>NSHighResolutionCapable</key>
+    <true/>
+    <key>NSPrincipalClass</key>
+    <string>NSApplication</string>
+
+    <!-- Required for browser tab enumeration via AppleScript. -->
+    <key>NSAppleEventsUsageDescription</key>
+    <string>Spectre Check needs to read your open browser tabs so it can flag any interview AI copilots before your interview begins. It only reads tab titles and URLs - it does not change any browser state.</string>
+
+    <!-- Reads the list of on-screen windows to check for transparent overlays
+         hidden from screen sharing. No screenshots or recordings are taken. -->
+    <key>NSScreenCaptureDescription</key>
+    <string>Spectre Check reads the list of on-screen windows to check for transparent AI overlays hidden from screen sharing. No screenshots or recordings are taken.</string>
+
+    <key>NSSystemAdministrationUsageDescription</key>
+    <string>Spectre Check lists running processes to flag AI interview copilots.</string>
+</dict>
+</plist>
