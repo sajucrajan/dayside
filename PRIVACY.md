@@ -18,7 +18,7 @@ During a scan, Dayside reads:
 - **No data storage.** Nothing is written to disk. When the app closes, nothing remains.
 - **No recording.** Screen, camera, and microphone are not accessed.
 - **No biometrics.** No face scan, no voiceprint, no keystroke logging.
-- **No process termination.** Dayside is read-only. It never kills, suspends, or modifies any process.
+- **No process termination.** Dayside is read-only. By design, it does not kill, suspend, or modify any process.
 - **No background operation.** The app does not start on login, does not run as a service, and does not operate after it is closed.
 
 ## Consent

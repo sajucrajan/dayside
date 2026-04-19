@@ -40,7 +40,7 @@ Remote interviews have a new problem. A generation of invisible AI interview ass
 
 Dayside is a small, local, open tool the candidate runs before the interview begins. It enumerates what's running on the machine, flags known AI interview assistants and stealth patterns, and shows the results on the candidate's own screen. The candidate shares that screen with the interviewer, and they discuss anything flagged together. Dayside stays visible during the interview — in its compact pill mode — so the interviewer can see at a glance that the scan is current and clean.
 
-It's intentionally simple. Explicit consent. An explicit scan button. Optional periodic re-scans if the candidate opts in. No cloud. No recording. No account. **The tool only observes** — it never terminates processes or modifies the candidate's machine. When action is needed, the candidate takes it themselves through their operating system's normal tools (Task Manager on Windows, Activity Monitor on macOS).
+It's intentionally simple. Explicit consent. An explicit scan button. Optional periodic re-scans if the candidate opts in. No cloud. No recording. No account. **The tool only observes** — by design it does not terminate processes or modify the candidate's machine. When action is needed, the candidate takes it themselves through their operating system's normal tools (Task Manager on Windows, Activity Monitor on macOS).
 
 > The name "Dayside" comes from the astronomical term for the lit side of a planet — the part where everything is visible. That's the posture of the tool: everything in daylight, nothing hidden.
 
