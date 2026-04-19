@@ -8,7 +8,7 @@
 
 **It is** a candidate-operated, read-only diagnostic tool. The candidate downloads and runs the executable on their own machine, voluntarily, before the interview starts. The candidate explicitly clicks **Start scan** when they're ready — the tool does not scan automatically after consent. Results appear on the candidate's screen. During a screen-share, the interviewer can see the results and discuss anything flagged. The candidate may optionally enable a "Keep checking every 5 minutes" checkbox to catch anything launched during the interview, but this is off by default.
 
-The tool stays visible during the interview in a small always-on-top pill ("compact mode") so both parties can see at a glance that the scan is current. If the candidate decides to close a flagged program, they do so themselves through their operating system's standard tools (Task Manager on Windows, Activity Monitor on macOS) — Dayside never takes any action on the machine.
+The tool stays visible during the interview in a small always-on-top pill ("compact mode") so both parties can see at a glance that the scan is current. If the candidate decides to close a flagged program, they do so themselves through their operating system's standard tools (Task Manager on Windows, Activity Monitor on macOS) — Dayside is designed as a read-only tool and does not take any action on the machine.
 
 **It is not** a proctoring tool, a background check, a biometric system, or a hiring algorithm. It does not make decisions. It does not send data to any server. It does not record. It does not terminate processes. It does not modify anything on the candidate's machine. It does not keep anything after it closes. It does not hide from the screen-share — it is designed to be visible to both parties throughout the interview.
 
@@ -53,7 +53,7 @@ Send something like this with the interview invitation, at least 48 hours before
 > - Initial scan: roughly 10 seconds
 > - Data sent off your machine: none
 > - Recording: none
-> - The tool is read-only — it shows you what's running but never closes, modifies, or changes anything on your machine
+> - The tool is read-only — it shows you what's running and does not close, modify, or change anything on your machine
 >
 > **How it will work during our interview:**
 >
@@ -65,7 +65,7 @@ Send something like this with the interview invitation, at least 48 hours before
 >
 > **If you cannot run the tool**, for any reason, please reply to this email and we'll arrange an alternative — typically a brief walk-through of Task Manager (Windows) or Activity Monitor (macOS).
 >
-> **If you rely on assistive software** (screen readers, voice control, captioning, magnification, etc.), please let us know in advance so we can interpret any results correctly. Running these tools will never affect your candidacy.
+> **If you rely on assistive software** (screen readers, voice control, captioning, magnification, etc.), please let us know in advance so we can interpret any results correctly. Assistive technology use will not be held against you. All hiring decisions are based on job-related qualifications.
 >
 > **Questions?** Reply to this email.
 
